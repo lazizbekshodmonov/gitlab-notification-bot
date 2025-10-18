@@ -1,6 +1,6 @@
 import type { GitLabMergeRequestEvent } from '../types/gitlab/merge-request-event.js';
 import type { GitlabPipelineEvent } from '../types/gitlab/pipeline-event.js';
-import type { GitlabBuildEvent } from '../types/gitlab/build-event.js';
+import type { IGitlabBuildEvent } from '../types/gitlab/build-event.js';
 import prisma from '../config/prisma.js';
 
 export class GitlabEventService {
@@ -81,7 +81,7 @@ export class GitlabEventService {
   }
 
   /** Build Event */
-  async handleBuild(event: GitlabBuildEvent) {
+  async handleBuild(event: IGitlabBuildEvent) {
     const pipeline = await prisma.gitlabPipelineEvent.findUnique({
       where: { pipelineId: event.pipeline_id },
     });

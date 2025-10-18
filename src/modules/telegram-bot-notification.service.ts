@@ -3,10 +3,11 @@ import prisma from '../config/prisma.js';
 import type { GitLabPushEvent } from '../types/gitlab/push-event.js';
 import type { GitLabMergeRequestEvent } from '../types/gitlab/merge-request-event.js';
 import type { GitlabPipelineEvent } from '../types/gitlab/pipeline-event.js';
-import type { GitlabBuildEvent } from '../types/gitlab/build-event.js';
 import { GitlabEventService } from './gitlab-event.service.js';
 import { MessageGeneratorService } from './message-generator.service.js';
 import { KeyboardGeneratorService } from './keyboard-generator.service.js';
+import type { IGitlabBuildEvent } from '../types/gitlab/build-event.js';
+import type { GitlabBuildEvent } from '@prisma/client';
 
 export class GrammyTelegramService {
   private readonly gitlabEventService = new GitlabEventService();
@@ -64,7 +65,7 @@ export class GrammyTelegramService {
   }
 
   /** -------------------- Build/Job Event -------------------- */
-  async handleBuildEvent(event: GitlabBuildEvent) {
+  async handleBuildEvent(event: IGitlabBuildEvent) {
     const buildResponse = await this.gitlabEventService.handleBuild(event);
 
     const merge = buildResponse?.merge;
@@ -83,7 +84,7 @@ export class GrammyTelegramService {
     const text =
       messageText +
       this.messageGeneratorService.generateCICDJobsMessage(
-        builds.map((item) => {
+        builds.map((item: GitlabBuildEvent) => {
           return { name: item.name, status: item.status, url: item.url };
         })
       );

@@ -1,6 +1,6 @@
 import type { ObjectKind } from './index.js';
 
-export interface GitlabBuildEvent {
+export interface IGitlabBuildEvent {
   object_kind: ObjectKind;
   ref: string;
   tag: boolean;
