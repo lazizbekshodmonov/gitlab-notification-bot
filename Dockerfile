@@ -4,9 +4,12 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm ci --omit=dev
 
 COPY . .
+
+RUN npx prisma generate
+RUN npx prisma migrate deploy
 
 RUN npm run build
 

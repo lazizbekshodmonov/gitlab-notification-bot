@@ -12,7 +12,6 @@ services:
       - "4000:4000"
     volumes:
       - ./logs:/app/logs
-    command: sh -c "npx prisma migrate deploy && npm run start"
     networks:
       - gitlab-notification-bot-network
 
