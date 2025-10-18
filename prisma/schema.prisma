@@ -1,0 +1,48 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model GitlabMergeRequestEvent {
+  id          Int                   @id @default(autoincrement())
+  eventId     Int                   @unique
+  chatId      String
+  messageId   Int
+  messageText String
+  state       String
+  status      String
+  url         String
+  pipelines   GitlabPipelineEvent[]
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+}
+
+model GitlabPipelineEvent {
+  id             Int                     @id @default(autoincrement())
+  pipelineId     Int                     @unique
+  status         String
+  stages         String[]
+  url            String
+  mergeRequestId Int
+  mergeRequest   GitlabMergeRequestEvent @relation(fields: [mergeRequestId], references: [id])
+  builds         GitlabBuildEvent[]
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+}
+
+model GitlabBuildEvent {
+  id         Int                 @id @default(autoincrement())
+  buildId    Int                 @unique
+  stage      String
+  status     String
+  name       String
+  url        String?
+  pipelineId Int
+  pipeline   GitlabPipelineEvent @relation(fields: [pipelineId], references: [id])
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+}
