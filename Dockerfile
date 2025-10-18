@@ -1,15 +1,21 @@
-FROM node:20 AS production
+FROM node:20
 
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install --omit=dev
+RUN npm install
 
-COPY --from=builder /app/dist ./dist
+COPY . .
+
+RUN npx prisma generate
+
+RUN npm run build
+
 COPY .env .env
 
-EXPOSE 4000
-CMD ["node", "dist/main.js"]
+EXPOSE "4000"
 
-CMD "npx prisma migrate deploy"
+CMD ["npm", "run", "start"]
+CMD ["npx", "prisma", "migrate", "deploy"]
+
