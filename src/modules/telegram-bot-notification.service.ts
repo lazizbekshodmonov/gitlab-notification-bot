@@ -8,6 +8,9 @@ import { MessageGeneratorService } from './message-generator.service.js';
 import { KeyboardGeneratorService } from './keyboard-generator.service.js';
 import type { IGitlabBuildEvent } from '../types/gitlab/build-event.js';
 import type { GitlabBuildEvent } from '@prisma/client';
+import getEnvVariable from '../config/env.js';
+
+const threadId = getEnvVariable('TELEGRAM_THREAD_ID');
 
 export class GrammyTelegramService {
   private readonly gitlabEventService = new GitlabEventService();
@@ -17,7 +20,10 @@ export class GrammyTelegramService {
   /** -------------------- Push Event -------------------- */
   async handlePushEvent(event: GitLabPushEvent, chatId: string) {
     const message = this.messageGeneratorService.pushEventMessage(event);
-    await bot.api.sendMessage(chatId, message, { parse_mode: 'HTML' });
+    await bot.api.sendMessage(chatId, message, {
+      parse_mode: 'HTML',
+      message_thread_id: Number(threadId),
+    });
   }
 
   /** -------------------- Merge Request Event -------------------- */
@@ -38,6 +44,7 @@ export class GrammyTelegramService {
     } else {
       const msg = await bot.api.sendMessage(chatId, text, {
         parse_mode: 'HTML',
+        message_thread_id: Number(threadId),
       });
       await this.gitlabEventService.handleMergeRequest(event, chatId, msg.message_id, text);
     }
