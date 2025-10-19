@@ -61,14 +61,14 @@ export class GitlabEventService {
 
     for (const item of event.builds) {
       await prisma.gitlabBuildEvent.upsert({
-        where: { eventId: item.id },
+        where: { eventId: String(item.id) },
         update: {
           name: item.name,
           status: item.status,
           stage: item.stage,
         },
         create: {
-          eventId: item.id,
+          eventId: String(item.id),
           sha: event.object_attributes.sha,
           mergeRequestId: mergeRequest.id,
           name: item.name,
@@ -97,7 +97,7 @@ export class GitlabEventService {
     if (!mergeRequest) throw new Error(`Merge request not found: ${event.sha}`);
 
     const build = await prisma.gitlabBuildEvent.upsert({
-      where: { eventId: event.build_id },
+      where: { eventId: String(event.build_id) },
       update: {
         stage: event.build_stage,
         status: event.build_status,
@@ -105,7 +105,7 @@ export class GitlabEventService {
         url: event?.runner ? `${event.project.web_url}/-/jobs/${event.runner.id}` : null,
       },
       create: {
-        eventId: event.build_id,
+        eventId: String(event.build_id),
         stage: event.build_stage,
         status: event.build_status,
         sha: event.sha,

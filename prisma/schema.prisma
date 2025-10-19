@@ -38,7 +38,7 @@ model GitlabPipelineEvent {
 
 model GitlabBuildEvent {
   id             Int                     @id @default(autoincrement())
-  eventId        Int                     @unique
+  eventId        String                  @unique
   sha            String
   stage          String
   status         String
