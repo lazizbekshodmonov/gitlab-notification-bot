@@ -12,7 +12,7 @@ export class GitlabEventService {
     messageText: string
   ) {
     return prisma.gitlabMergeRequestEvent.upsert({
-      where: { id: event.object_attributes.id },
+      where: { eventId: event.object_attributes.id },
       update: {
         messageText,
         state: event.object_attributes.state,
@@ -39,7 +39,7 @@ export class GitlabEventService {
     if (!mergeRequest) throw new Error('Merge request not found');
 
     const pipeline = await prisma.gitlabPipelineEvent.upsert({
-      where: { id: event.object_attributes.id },
+      where: { pipelineId: event.object_attributes.id },
       update: {
         status: event.object_attributes.status,
         stages: event.object_attributes.stages,
