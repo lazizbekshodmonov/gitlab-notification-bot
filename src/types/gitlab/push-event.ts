@@ -22,4 +22,3 @@ export interface IGitlabPushEvent {
   push_options: {};
   repository: IGitlabRepository;
 }
-export class IGitLabPushEvent {}

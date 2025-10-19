@@ -1,5 +1,5 @@
 {
-  "name": "resut-bot",
+  "name": "gitlab-notification-bot",
   "version": "1.0.0",
   "description": "To make it easy for you to get started with GitLab, here's a list of recommended next steps.",
   "main": "index.js",
@@ -10,16 +10,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/ielts-cdi-mock/dream-zone/resut-bot.git"
+    "url": "git+https://github.com/lazizbekshodmonov/gitlab-notification-bot.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "bugs": {
-    "url": "https://gitlab.com/ielts-cdi-mock/dream-zone/resut-bot/issues"
+    "url": "https://github.com/lazizbekshodmonov/gitlab-notification-bot/issues"
   },
-  "homepage": "https://gitlab.com/ielts-cdi-mock/dream-zone/resut-bot#readme",
+  "homepage": "https://github.com/lazizbekshodmonov/gitlab-notification-bot#readme",
   "devDependencies": {
     "@types/express": "^5.0.3",
     "@types/morgan": "^1.9.10",
@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "@grammyjs/storage-redis": "^2.5.1",
-    "axios": "^1.11.0",
     "dayjs": "^1.11.18",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",

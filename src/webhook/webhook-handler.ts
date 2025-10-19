@@ -7,6 +7,7 @@ import type { IGitlabDeploymentEvent } from '../types/gitlab/deployment-event.js
 import { logger } from '../config/winston.js';
 import type { IGitlabReleaseEvent } from '../types/gitlab/release-event.js';
 import type { Request, Response } from 'express';
+import type { IGitlabPushEvent } from '../types/gitlab/push-event.js';
 
 function isEmptyObject(obj: Object) {
   return !Object.keys(obj).length;
@@ -23,29 +24,24 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
   try {
     const chatId = req.params.chatId as string;
     const threadId = req.params.threadId;
-    const event = req.body as GitlabEvent;
+    const event: GitlabEvent = req.body as GitlabEvent;
     const object_kind = event.object_kind;
 
     switch (object_kind) {
       // ========== PUSH EVENT ==========
       case 'push': {
-        const body = event;
+        const body = event as IGitlabPushEvent;
         const user = body.user_name;
         const project = body.project;
         const commits = body.commits ?? [];
         const branch = body.ref?.split('/').pop() ?? 'unknown';
         const totalCommits = commits.length;
-        const compareUrl = body.compare;
 
         let msg = `📤 <b>Push Event Detected!</b>\n\n`;
         msg += `📦 <b>Project:</b> <a href="${project.web_url}">${project.path_with_namespace}</a>\n`;
         msg += `🌿 <b>Branch:</b> ${branch}\n`;
         msg += `👤 <b>Pushed by:</b> ${user}\n`;
         msg += `🧱 <b>Commits:</b> ${totalCommits}\n\n`;
-
-        if (compareUrl) {
-          msg += `🔗 <a href="${compareUrl}">Compare Changes</a>\n\n`;
-        }
 
         const displayCommits = commits.slice(-3);
         for (const commit of displayCommits) {
