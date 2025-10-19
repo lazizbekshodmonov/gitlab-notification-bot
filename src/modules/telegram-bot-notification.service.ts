@@ -28,9 +28,9 @@ export class GrammyTelegramService {
 
   /** -------------------- Merge Request Event -------------------- */
   async handleMergeEvent(event: GitLabMergeRequestEvent, chatId: string) {
-    const merge = await prisma.gitlabMergeRequestEvent.findUnique({
+    const merge = await prisma.gitlabMergeRequestEvent.findFirst({
       where: {
-        eventId: event.object_attributes.id,
+        sha: event.object_attributes.merge_commit_sha,
       },
     });
 

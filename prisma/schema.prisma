@@ -10,6 +10,7 @@ generator client {
 model GitlabMergeRequestEvent {
   id          Int                   @id @default(autoincrement())
   eventId     Int                   @unique
+  sha         String
   chatId      String
   messageId   Int
   messageText String
@@ -23,7 +24,8 @@ model GitlabMergeRequestEvent {
 
 model GitlabPipelineEvent {
   id             Int                     @id @default(autoincrement())
-  pipelineId     Int                     @unique
+  eventId        Int                     @unique
+  sha            String
   status         String
   stages         String[]
   url            String
@@ -36,7 +38,8 @@ model GitlabPipelineEvent {
 
 model GitlabBuildEvent {
   id         Int                 @id @default(autoincrement())
-  buildId    Int                 @unique
+  eventId    Int                 @unique
+  sha        String
   stage      String
   status     String
   name       String

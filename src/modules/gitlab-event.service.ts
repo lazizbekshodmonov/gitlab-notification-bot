@@ -22,6 +22,7 @@ export class GitlabEventService {
         chatId,
         messageId,
         messageText,
+        sha: event.object_attributes.merge_commit_sha,
         eventId: event.object_attributes.id,
         url: event.object_attributes.url,
         state: event.object_attributes.state,
@@ -32,20 +33,21 @@ export class GitlabEventService {
 
   /** Pipeline Event */
   async handlePipeline(event: GitlabPipelineEvent) {
-    const mergeRequest = await prisma.gitlabMergeRequestEvent.findUnique({
-      where: { eventId: event.merge_request.id },
+    const mergeRequest = await prisma.gitlabMergeRequestEvent.findFirst({
+      where: { sha: event.object_attributes.sha },
     });
 
     if (!mergeRequest) throw new Error('Merge request not found');
 
     const pipeline = await prisma.gitlabPipelineEvent.upsert({
-      where: { pipelineId: event.object_attributes.id },
+      where: { eventId: event.object_attributes.id },
       update: {
         status: event.object_attributes.status,
         stages: event.object_attributes.stages,
       },
       create: {
-        pipelineId: event.object_attributes.id,
+        eventId: event.object_attributes.id,
+        sha: event.object_attributes.sha,
         status: event.object_attributes.status,
         stages: event.object_attributes.stages,
         url: event.object_attributes.url,
@@ -59,14 +61,15 @@ export class GitlabEventService {
 
     for (const item of event.builds) {
       await prisma.gitlabBuildEvent.upsert({
-        where: { buildId: item.id },
+        where: { eventId: item.id },
         update: {
           name: item.name,
           status: item.status,
           stage: item.stage,
         },
         create: {
-          buildId: item.id,
+          eventId: item.id,
+          sha: event.object_attributes.sha,
           pipelineId: pipeline.id,
           name: item.name,
           status: item.status,
@@ -82,8 +85,8 @@ export class GitlabEventService {
 
   /** Build Event */
   async handleBuild(event: IGitlabBuildEvent) {
-    const pipeline = await prisma.gitlabPipelineEvent.findUnique({
-      where: { pipelineId: event.pipeline_id },
+    const pipeline = await prisma.gitlabPipelineEvent.findFirst({
+      where: { sha: event.sha },
     });
 
     if (!pipeline) throw new Error(`Pipeline not found: ${event.pipeline_id}`);
@@ -93,7 +96,7 @@ export class GitlabEventService {
     });
 
     const build = await prisma.gitlabBuildEvent.upsert({
-      where: { buildId: event.build_id },
+      where: { eventId: event.build_id },
       update: {
         stage: event.build_stage,
         status: event.build_status,
@@ -101,9 +104,10 @@ export class GitlabEventService {
         url: event?.runner ? `${event.project.web_url}/-/jobs/${event.runner.id}` : null,
       },
       create: {
-        buildId: event.build_id,
+        eventId: event.build_id,
         stage: event.build_stage,
         status: event.build_status,
+        sha: event.sha,
         name: event.build_name,
         url: event?.runner ? `${event.project.web_url}/-/jobs/${event.runner.id}` : null,
         pipeline: {

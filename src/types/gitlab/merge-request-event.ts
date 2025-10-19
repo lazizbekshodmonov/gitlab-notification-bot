@@ -2,7 +2,7 @@ import type { ObjectKind } from './index.js';
 
 export interface GitLabMergeRequestEvent {
   object_kind: ObjectKind;
-  event_type: string;
+  event_type: 'merge_request';
   user: {
     id: number;
     name: string;
@@ -10,94 +10,45 @@ export interface GitLabMergeRequestEvent {
     avatar_url: string;
     email: string;
   };
-  project: {
-    id: number;
-    name: string;
-    description: string;
-    web_url: string;
-    avatar_url: string | null;
-    git_ssh_url: string;
-    git_http_url: string;
-    namespace: string;
-    visibility_level: number;
-    path_with_namespace: string;
-    default_branch: string;
-    ci_config_path: string;
-    homepage: string;
-    url: string;
-    ssh_url: string;
-    http_url: string;
-  };
-  repository: {
-    name: string;
-    url: string;
-    description: string;
-    homepage: string;
-  };
+  project: GitLabProject;
   object_attributes: {
+    assignee_id: number | null;
+    author_id: number;
+    created_at: string;
+    description: string;
+    draft: boolean;
+    head_pipeline_id: number | null;
     id: number;
     iid: number;
-    target_branch: string;
+    last_edited_at: string | null;
+    last_edited_by_id: number | null;
+    merge_commit_sha: string;
+    merge_error: string | null;
+    merge_params: {
+      force_remove_source_branch: string;
+    };
+    merge_status: string;
+    merge_user_id: number | null;
+    merge_when_pipeline_succeeds: boolean;
+    milestone_id: number | null;
     source_branch: string;
     source_project_id: number;
-    author_id: number;
-    assignee_ids: number[];
-    assignee_id: number;
-    reviewer_ids: number[];
-    title: string;
-    created_at: string;
-    updated_at: string;
-    last_edited_at: string;
-    last_edited_by_id: number;
-    milestone_id: number | null;
     state_id: number;
-    state: string;
-    blocking_discussions_resolved: boolean;
-    work_in_progress: boolean;
-    draft: boolean;
-    first_contribution: boolean;
-    merge_status: string;
+    target_branch: string;
     target_project_id: number;
-    description: string;
+    time_estimate: number;
+    title: string;
+    updated_at: string;
+    updated_by_id: number | null;
     prepared_at: string;
-    total_time_spent: number;
-    time_change: number;
-    human_total_time_spent: string;
-    human_time_change: string;
-    human_time_estimate: string;
-    url: string;
-    source: {
-      name: string;
-      description: string;
-      web_url: string;
-      avatar_url: string | null;
-      git_ssh_url: string;
-      git_http_url: string;
-      namespace: string;
-      visibility_level: number;
-      path_with_namespace: string;
-      default_branch: string;
-      homepage: string;
-      url: string;
-      ssh_url: string;
-      http_url: string;
-    };
-    target: {
-      name: string;
-      description: string;
-      web_url: string;
-      avatar_url: string | null;
-      git_ssh_url: string;
-      git_http_url: string;
-      namespace: string;
-      visibility_level: number;
-      path_with_namespace: string;
-      default_branch: string;
-      homepage: string;
-      url: string;
-      ssh_url: string;
-      http_url: string;
-    };
+    assignee_ids: number[];
+    blocking_discussions_resolved: boolean;
+    detailed_merge_status: string;
+    first_contribution: boolean;
+    human_time_change: string | null;
+    human_time_estimate: string | null;
+    human_total_time_spent: string | null;
+    labels: string[];
     last_commit: {
       id: string;
       message: string;
@@ -109,95 +60,57 @@ export interface GitLabMergeRequestEvent {
         email: string;
       };
     };
-    labels: {
-      id: number;
-      title: string;
-      color: string;
-      project_id: number;
-      created_at: string;
-      updated_at: string;
-      template: boolean;
-      description: string;
-      type: string;
-      group_id: number;
-    }[];
+    reviewer_ids: number[];
+    source: GitLabProject;
+    state: string;
+    system: boolean;
+    target: GitLabProject;
+    time_change: number;
+    total_time_spent: number;
+    url: string;
+    work_in_progress: boolean;
+    approval_rules: any[];
     action: string;
-    detailed_merge_status: string;
   };
-  labels: {
-    id: number;
-    title: string;
-    color: string;
-    project_id: number;
-    created_at: string;
-    updated_at: string;
-    template: boolean;
-    description: string;
-    type: string;
-    group_id: number;
-  }[];
+  labels: string[];
   changes: {
-    updated_by_id: {
+    merge_commit_sha?: {
       previous: string | null;
+      current: string | null;
+    };
+    state_id?: {
+      previous: number;
       current: number;
     };
-    draft: {
-      previous: boolean;
-      current: boolean;
-    };
-    updated_at: {
+    updated_at?: {
       previous: string;
       current: string;
     };
-    labels: {
-      previous: {
-        id: number;
-        title: string;
-        color: string;
-        project_id: number;
-        created_at: string;
-        updated_at: string;
-        template: boolean;
-        description: string;
-        type: string;
-        group_id: number;
-      }[];
-      current: {
-        id: number;
-        title: string;
-        color: string;
-        project_id: number;
-        created_at: string;
-        updated_at: string;
-        template: boolean;
-        description: string;
-        type: string;
-        group_id: number;
-      }[];
-    };
-    last_edited_at: {
-      previous: string | null;
-      current: string;
-    };
-    last_edited_by_id: {
-      previous: string | null;
-      current: number;
-    };
+    [key: string]: any;
   };
-  assignees: [
-    {
-      id: number;
-      name: string;
-      username: string;
-      avatar_url: string;
-    },
-  ];
-  reviewers: [
-    {
-      id: number;
-      name: string;
-      username: string;
-      avatar_url: string;
-    },
-  ];
+  repository: {
+    name: string;
+    url: string;
+    description: string | null;
+    homepage: string;
+  };
+}
+
+export interface GitLabProject {
+  id: number;
+  name: string;
+  description: string | null;
+  web_url: string;
+  avatar_url: string | null;
+  git_ssh_url: string;
+  git_http_url: string;
+  namespace: string;
+  visibility_level: number;
+  path_with_namespace: string;
+  default_branch: string;
+  ci_config_path: string;
+  homepage: string;
+  url: string;
+  ssh_url: string;
+  http_url: string;
 }
