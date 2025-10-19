@@ -70,7 +70,7 @@ export class GitlabEventService {
         create: {
           eventId: item.id,
           sha: event.object_attributes.sha,
-          pipelineId: pipeline.id,
+          mergeRequestId: mergeRequest.id,
           name: item.name,
           status: item.status,
           stage: item.stage,
@@ -88,12 +88,13 @@ export class GitlabEventService {
     const pipeline = await prisma.gitlabPipelineEvent.findFirst({
       where: { sha: event.sha },
     });
+    //
 
-    if (!pipeline) throw new Error(`Pipeline not found: ${event.pipeline_id}`);
-
-    const mergeRequest = await prisma.gitlabMergeRequestEvent.findUnique({
-      where: { id: pipeline.mergeRequestId },
+    const mergeRequest = await prisma.gitlabMergeRequestEvent.findFirst({
+      where: { sha: event.sha },
     });
+
+    if (!mergeRequest) throw new Error(`Merge request not found: ${event.sha}`);
 
     const build = await prisma.gitlabBuildEvent.upsert({
       where: { eventId: event.build_id },
@@ -109,12 +110,8 @@ export class GitlabEventService {
         status: event.build_status,
         sha: event.sha,
         name: event.build_name,
+        mergeRequestId: mergeRequest.id,
         url: event?.runner ? `${event.project.web_url}/-/jobs/${event.runner.id}` : null,
-        pipeline: {
-          connect: {
-            id: pipeline.id,
-          },
-        },
       },
     });
     return {

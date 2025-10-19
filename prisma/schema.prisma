@@ -8,18 +8,19 @@ generator client {
 }
 
 model GitlabMergeRequestEvent {
-  id          Int                   @id @default(autoincrement())
-  eventId     Int                   @unique
-  sha         String
-  chatId      String
-  messageId   Int
-  messageText String
-  state       String
-  status      String
-  url         String
-  pipelines   GitlabPipelineEvent[]
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
+  id               Int                   @id @default(autoincrement())
+  eventId          Int                   @unique
+  sha              String
+  chatId           String
+  messageId        Int
+  messageText      String
+  state            String
+  status           String
+  url              String
+  pipelines        GitlabPipelineEvent[]
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  GitlabBuildEvent GitlabBuildEvent[]
 }
 
 model GitlabPipelineEvent {
@@ -31,21 +32,20 @@ model GitlabPipelineEvent {
   url            String
   mergeRequestId Int
   mergeRequest   GitlabMergeRequestEvent @relation(fields: [mergeRequestId], references: [id])
-  builds         GitlabBuildEvent[]
   createdAt      DateTime                @default(now())
   updatedAt      DateTime                @updatedAt
 }
 
 model GitlabBuildEvent {
-  id         Int                 @id @default(autoincrement())
-  eventId    Int                 @unique
-  sha        String
-  stage      String
-  status     String
-  name       String
-  url        String?
-  pipelineId Int
-  pipeline   GitlabPipelineEvent @relation(fields: [pipelineId], references: [id])
-  createdAt  DateTime            @default(now())
-  updatedAt  DateTime            @updatedAt
+  id             Int                     @id @default(autoincrement())
+  eventId        Int                     @unique
+  sha            String
+  stage          String
+  status         String
+  name           String
+  url            String?
+  mergeRequestId Int
+  mergeRequest   GitlabMergeRequestEvent @relation(fields: [mergeRequestId], references: [id])
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
 }

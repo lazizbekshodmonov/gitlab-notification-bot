@@ -21,7 +21,7 @@ ${commits}
   }
 
   mergeRequestMessage(event: GitLabMergeRequestEvent): string {
-    const { user, object_attributes, assignees, reviewers, project } = event;
+    const { user, object_attributes, project } = event;
 
     const actionEmoji =
       {
@@ -33,10 +33,10 @@ ${commits}
       }[object_attributes.action] || 'ℹ️ Updated';
 
     const author = user?.name || 'Unknown';
-    const assigneeList =
-      assignees && assignees.length > 0 ? assignees.map((a) => a.name).join(', ') : 'No assignee';
-    const reviewerList =
-      reviewers && reviewers.length > 0 ? reviewers.map((r) => r.name).join(', ') : 'No reviewer';
+    // const assigneeList =
+    //   assignees && assignees.length > 0 ? assignees.map((a) => a.name).join(', ') : 'No assignee';
+    // const reviewerList =
+    //   reviewers && reviewers.length > 0 ? reviewers.map((r) => r.name).join(', ') : 'No reviewer';
 
     const sourceBranch = object_attributes.source_branch;
     const targetBranch = object_attributes.target_branch;
@@ -48,16 +48,14 @@ ${commits}
     return `
 🚀 <b>${actionEmoji} Merge Request</b>\n
 
+👤 <b>Author:</b> ${author}
 📦 <b>Project:</b> <a href="${event.project.url}">${projectName}</a>
 📄 <b>Title:</b> ${title}
 🔀 <b>Branches:</b> <a href="${url}">${sourceBranch} → ${targetBranch}</a> 
-
-👤 <b>Author:</b> ${author}
-👥 <b>Assignees:</b> ${assigneeList}
-🧑‍💻 <b>Reviewers:</b> ${reviewerList}
-
   `.trim();
   }
+  // 👥 <b>Assignees:</b> ${assigneeList}
+  // 🧑‍💻 <b>Reviewers:</b> ${reviewerList}
 
   generateCICDJobsMessage(builds: { name: string; status: string; url?: string | null }[]): string {
     return (
