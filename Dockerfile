@@ -8,6 +8,7 @@ RUN npm install
 
 COPY . .
 
+RUN npx prisma migrate reset --force
 RUN npx prisma generate
 
 RUN npm run build
