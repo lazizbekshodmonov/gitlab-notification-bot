@@ -24,26 +24,19 @@
     "@types/express": "^5.0.3",
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.2.0",
-    "@types/node-schedule": "^2.1.8",
-    "@types/qrcode": "^1.5.5",
-    "prisma": "^6.16.3",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.3",
     "typescript": "^5.9.2"
   },
   "dependencies": {
     "@grammyjs/storage-redis": "^2.5.1",
-    "@prisma/client": "^6.16.3",
     "axios": "^1.11.0",
     "dayjs": "^1.11.18",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "grammy": "^1.37.0",
-    "ioredis": "^5.7.0",
     "morgan": "^1.10.1",
-    "node-schedule": "^2.1.1",
     "prettier": "^3.6.2",
-    "qrcode": "^1.5.4",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
   }

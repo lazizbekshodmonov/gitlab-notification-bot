@@ -1,11 +1,24 @@
-import type { GitLabPushEvent } from './push-event.js';
-import type { GitLabMergeRequestEvent } from './merge-request-event.js';
-import type { GitlabPipelineEvent } from './pipeline-event.js';
+import type { IGitlabPushEvent } from './push-event.js';
+import type { IGitLabMergeRequestEvent } from './merge-request-event.js';
+import type { IGitlabPipelineEvent } from './pipeline-event.js';
 import type { IGitlabBuildEvent } from './build-event.js';
+import type { IGitlabNoteEvent } from './note-event.js';
+import type { IGitlabDeploymentEvent } from './deployment-event.js';
+import type { IGitlabReleaseEvent } from './release-event.js';
 
-export type GitlabEvent = GitLabPushEvent &
-  GitLabMergeRequestEvent &
-  GitlabPipelineEvent &
-  IGitlabBuildEvent;
+export type GitlabEvent = IGitlabPushEvent &
+  IGitLabMergeRequestEvent &
+  IGitlabPipelineEvent &
+  IGitlabBuildEvent &
+  IGitlabNoteEvent &
+  IGitlabDeploymentEvent &
+  IGitlabReleaseEvent;
 
-export type ObjectKind = 'push' | 'merge_request' | 'pipeline' | 'build';
+export type EventType =
+  | 'push'
+  | 'merge_request'
+  | 'pipeline'
+  | 'build'
+  | 'note'
+  | 'deployment'
+  | 'release';

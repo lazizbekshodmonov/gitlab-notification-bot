@@ -7,10 +7,8 @@ type TEnvironments =
   | 'PORT'
   | 'REDIS_URL'
   | 'DATABASE_URL'
-  | 'TELEGRAM_GROUP_LINK'
-  | 'TELEGRAM_GROUP_ID'
   | 'BOT_ADMIN_ID'
-  | 'TELEGRAM_THREAD_ID';
+  | 'WEBHOOK_BASE_URL';
 
 config({ path: resolve(process.cwd(), '.env') });
 

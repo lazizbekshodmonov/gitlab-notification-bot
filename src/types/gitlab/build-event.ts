@@ -1,7 +1,10 @@
-import type { ObjectKind } from './index.js';
+import type { EventType } from './index.js';
+import type { IGitlabUser } from './gitlab-user.js';
+import type { IGitlabRunner } from './gitlab-runner.js';
+import type { IGitlabProject, IGitlabRepository } from './gitlab-repository.js';
 
 export interface IGitlabBuildEvent {
-  object_kind: ObjectKind;
+  object_kind: EventType;
   ref: string;
   tag: boolean;
   before_sha: string;
@@ -22,25 +25,17 @@ export interface IGitlabBuildEvent {
   build_allow_failure: boolean;
   build_failure_reason: string | null;
   pipeline_id: number;
-  runner: GitlabRunner | null;
+  runner: IGitlabRunner | null;
   project_id: number;
   project_name: string;
-  user: GitlabUser;
-  commit: GitlabBuildCommit;
-  repository: GitlabRepository;
-  project: GitlabProject;
+  user: IGitlabUser;
+  commit: IGitlabBuildCommit;
+  repository: IGitlabRepository;
+  project: IGitlabProject;
   environment: string | null;
 }
 
-export interface GitlabUser {
-  id: number;
-  name: string;
-  username: string;
-  avatar_url: string;
-  email: string;
-}
-
-export interface GitlabBuildCommit {
+export interface IGitlabBuildCommit {
   id: number;
   name: string | null;
   sha: string;
@@ -54,38 +49,4 @@ export interface GitlabBuildCommit {
   finished_at: string | null;
   started_at_iso: string | null;
   finished_at_iso: string | null;
-}
-
-export interface GitlabRepository {
-  name: string;
-  url: string;
-  description: string | null;
-  homepage: string;
-  git_http_url: string;
-  git_ssh_url: string;
-  visibility_level: number;
-}
-
-export interface GitlabProject {
-  id: number;
-  name: string;
-  description: string | null;
-  web_url: string;
-  avatar_url: string | null;
-  git_ssh_url: string;
-  git_http_url: string;
-  namespace: string;
-  visibility_level: number;
-  path_with_namespace: string;
-  default_branch: string;
-  ci_config_path: string;
-}
-
-export interface GitlabRunner {
-  id: number;
-  description: string;
-  runner_type: string;
-  active: boolean;
-  is_shared: boolean;
-  tags: string[];
 }

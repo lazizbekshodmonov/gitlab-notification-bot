@@ -1,16 +1,19 @@
-import type { ObjectKind } from './index.js';
+import type { EventType } from './index.js';
+import type { IGitlabUser } from './gitlab-user.js';
+import type { IGitlabRunner } from './gitlab-runner.js';
+import type { IGitlabCommit, IGitlabProject } from './gitlab-repository.js';
 
-export interface GitlabPipelineEvent {
-  object_kind: ObjectKind;
-  object_attributes: GitlabPipelineAttributes;
+export interface IGitlabPipelineEvent {
+  object_kind: EventType;
+  object_attributes: IGitlabPipelineAttributes;
   merge_request: any | null;
-  user: GitlabUser;
-  project: GitlabProject;
-  commit: GitlabCommit;
-  builds: GitlabBuild[];
+  user: IGitlabUser;
+  project: IGitlabProject;
+  commit: IGitlabCommit;
+  builds: IGitlabBuild[];
 }
 
-export interface GitlabPipelineAttributes {
+export interface IGitlabPipelineAttributes {
   id: number;
   iid: number;
   name: string | null;
@@ -31,44 +34,7 @@ export interface GitlabPipelineAttributes {
   url: string;
 }
 
-export interface GitlabUser {
-  id: number;
-  name: string;
-  username: string;
-  avatar_url: string;
-  email: string;
-}
-
-export interface GitlabProject {
-  id: number;
-  name: string;
-  description: string | null;
-  web_url: string;
-  avatar_url: string | null;
-  git_ssh_url: string;
-  git_http_url: string;
-  namespace: string;
-  visibility_level: number;
-  path_with_namespace: string;
-  default_branch: string;
-  ci_config_path: string;
-}
-
-export interface GitlabCommit {
-  id: string;
-  message: string;
-  title: string;
-  timestamp: string;
-  url: string;
-  author: GitlabCommitAuthor;
-}
-
-export interface GitlabCommitAuthor {
-  name: string;
-  email: string;
-}
-
-export interface GitlabBuild {
+export interface IGitlabBuild {
   id: number;
   stage: string;
   name: string;
@@ -82,20 +48,11 @@ export interface GitlabBuild {
   when: string;
   manual: boolean;
   allow_failure: boolean;
-  user: GitlabUser;
-  runner: GitlabRunner | null;
+  user: IGitlabUser;
+  runner: IGitlabRunner | null;
   artifacts_file: {
     filename: string | null;
     size: number | null;
   };
   environment: string | null;
-}
-
-export interface GitlabRunner {
-  id: number;
-  description: string;
-  runner_type: string;
-  active: boolean;
-  is_shared: boolean;
-  tags: string[];
 }
