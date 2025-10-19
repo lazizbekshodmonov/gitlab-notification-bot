@@ -16,4 +16,4 @@ COPY .env .env
 
 EXPOSE 4000
 
-CMD RUN npx prisma migrate reset --force && npx prisma migrate deploy && npm run start
+CMD npx prisma migrate reset --force && npx prisma migrate deploy && npm run start
