@@ -1,15 +1,25 @@
-FROM node:20
+FROM node:20 AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
-
-RUN npm install
+RUN npm ci --legacy-peer-deps
 
 COPY . .
 
-COPY .env .env
+RUN npm run build
+
+
+FROM node:20
+
+WORKDIR /app
+
+COPY --from=builder /app/package*.json ./
+RUN npm ci --omit=dev --legacy-peer-deps
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/.env .env
 
 EXPOSE 4000
 
-CMD npm run start
+CMD ["node", "dist/main.js"]
