@@ -8,7 +8,6 @@ RUN npm install
 
 COPY . .
 
-RUN npx prisma migrate reset --force
 RUN npx prisma generate
 
 RUN npm run build
@@ -17,4 +16,4 @@ COPY .env .env
 
 EXPOSE 4000
 
-CMD npx prisma migrate deploy && npm run start
+CMD RUN npx prisma migrate reset --force && npx prisma migrate deploy && npm run start
