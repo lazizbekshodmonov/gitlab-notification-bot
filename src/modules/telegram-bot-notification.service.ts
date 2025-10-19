@@ -83,7 +83,7 @@ export class GrammyTelegramService {
 
     const builds = await prisma.gitlabBuildEvent.findMany({
       where: {
-        pipelineId: pipeline.id,
+        sha: pipeline.sha,
       },
     });
     const messageText = merge.messageText;
