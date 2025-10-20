@@ -11,6 +11,8 @@ services:
       - ./logs:/app/logs
     depends_on:
       - postgres
+    networks:
+      - gitlab_notification_network
 
   postgres:
     image: postgres:15
@@ -24,6 +26,12 @@ services:
       - "8032:5432"
     volumes:
       - gitlab-notification-postgres_data:/var/lib/postgresql/data
+    networks:
+      - gitlab_notification_network
 
 volumes:
   gitlab-notification-postgres_data:
+
+networks:
+  gitlab_notification_network:
+    driver: bridge
