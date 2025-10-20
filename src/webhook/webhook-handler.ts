@@ -31,15 +31,15 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
     switch (object_kind) {
       // ========== PUSH EVENT ==========
       case 'push': {
-        pushEventHandler(body as IGitlabPushEvent, chatId, threadId)
+        pushEventHandler(body as IGitlabPushEvent, chatId, threadId);
         break;
       }
 
       // ========== NOTE EVENT ==========
       case 'note': {
-        const body = event as unknown as IGitlabNoteEvent;
-        const item = body.object_attributes;
-        const user = body.user;
+        const event = body as unknown as IGitlabNoteEvent;
+        const item = event.object_attributes;
+        const user = event.user;
 
         if (Object.prototype.hasOwnProperty.call(item, 'action')) {
           let msg = '';
@@ -64,9 +64,9 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
 
       // ========== MERGE REQUEST EVENT ==========
       case 'merge_request': {
-        const body = event as unknown as IGitlabMergeRequestEvent;
-        const item = body.object_attributes;
-        const user = body.user;
+        const event = body as unknown as IGitlabMergeRequestEvent;
+        const item = event.object_attributes;
+        const user = event.user;
 
         if (Object.prototype.hasOwnProperty.call(item, 'action')) {
           let msg = '';
@@ -88,12 +88,12 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
           msg += `📦 <a href="${item.url}">${item.title}</a>\n`;
           msg += `🔀 <b>Branches:</b> ${item.source_branch} → ${item.target_branch}\n`;
 
-          if (body.assignees?.length) {
-            msg += `👥 <b>Assignees:</b> ${body.assignees.map((a) => a.name).join(', ')}\n`;
+          if (event.assignees?.length) {
+            msg += `👥 <b>Assignees:</b> ${event.assignees.map((a) => a.name).join(', ')}\n`;
           }
 
-          if (body.reviewers?.length) {
-            msg += `👀 <b>Reviewers:</b> ${body.reviewers.map((r) => r.name).join(', ')}\n`;
+          if (event.reviewers?.length) {
+            msg += `👀 <b>Reviewers:</b> ${event.reviewers.map((r) => r.name).join(', ')}\n`;
           }
 
           msg += `👤 <b>Opened by:</b> ${item.last_commit?.author?.name || user.name}\n`;
@@ -108,10 +108,10 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
 
       // ========== PIPELINE EVENT ==========
       case 'pipeline': {
-        const body = event as unknown as IGitlabPipelineEvent;
-        const item = body.object_attributes;
-        const user = body.user;
-        const commit = body.commit;
+        const event = body as unknown as IGitlabPipelineEvent;
+        const item = event.object_attributes;
+        const user = event.user;
+        const commit = event.commit;
 
         if (Object.prototype.hasOwnProperty.call(item, 'status')) {
           let msg = '';
@@ -135,8 +135,8 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
           msg += `👤 <b>Triggered by:</b> ${user.name}\n`;
           msg += `💬 <b>Commit:</b> ${commit.title}\n`;
 
-          if (body.merge_request && !isEmptyObject(body.merge_request)) {
-            msg += `📦 <b>Related MR:</b> <a href="${body.merge_request.url}">#${body.merge_request.iid}</a>\n`;
+          if (event.merge_request && !isEmptyObject(event.merge_request)) {
+            msg += `📦 <b>Related MR:</b> <a href="${event.merge_request.url}">#${event.merge_request.iid}</a>\n`;
           }
 
           sendMessage(chatId, msg, threadId);
@@ -146,12 +146,12 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
 
       // ========== DEPLOYMENT EVENT ==========
       case 'deployment': {
-        const body = event as unknown as IGitlabDeploymentEvent;
-        if (body.status === 'success') {
+        const event = body as unknown as IGitlabDeploymentEvent;
+        if (event.status === 'success') {
           const msg =
             `🚀📦 <b>Deployment Successful!</b>\n` +
-            `🌍 <b>Environment:</b> ${body.environment}\n` +
-            `🔗 <a href="${body.environment_external_url}">${body.environment_external_url}</a>`;
+            `🌍 <b>Environment:</b> ${event.environment}\n` +
+            `🔗 <a href="${event.environment_external_url}">${event.environment_external_url}</a>`;
           sendMessage(chatId, msg, threadId);
         }
         break;
@@ -159,13 +159,13 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
 
       // ========== RELEASE EVENT ==========
       case 'release': {
-        const body = event as unknown as IGitlabReleaseEvent;
-        if (body.action === 'create') {
+        const event = body as unknown as IGitlabReleaseEvent;
+        if (event.action === 'create') {
           const msg =
             `📢🎉 <b>New Release Published!</b>\n` +
-            `📦 <b>Project:</b> <a href="${body.project.web_url}">${body.project.path_with_namespace}</a>\n` +
-            `🏷️ <b>Version:</b> ${body.tag}\n` +
-            `🔗 <a href="${body.url}">View Release</a>`;
+            `📦 <b>Project:</b> <a href="${event.project.web_url}">${event.project.path_with_namespace}</a>\n` +
+            `🏷️ <b>Version:</b> ${event.tag}\n` +
+            `🔗 <a href="${event.url}">View Release</a>`;
           sendMessage(chatId, msg, threadId);
         }
         break;
