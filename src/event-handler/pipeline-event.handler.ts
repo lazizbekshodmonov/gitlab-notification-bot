@@ -50,7 +50,6 @@ export async function pipelineEventHandler(
         options.message_thread_id = Number(threadId);
       }
       const pushEvent = await eventMessageService.getMessageByEvent(event.object_attributes.sha);
-      console.log(pushEvent);
       if (pushEvent) {
         options = {
           ...options,
