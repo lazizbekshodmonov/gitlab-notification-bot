@@ -56,7 +56,7 @@ export async function pipelineEventHandler(
     }
 
     const excitingEvent = await eventMessageService.getMessageByEvent(
-      String(event.object_attributes.id)
+      String(event.object_attributes.sha)
     );
 
     if (excitingEvent) {
