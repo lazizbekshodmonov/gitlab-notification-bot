@@ -60,7 +60,9 @@ export async function pipelineEventHandler(
     );
 
     if (excitingEvent) {
-      await bot.api.editMessageText(chatId, Number(excitingEvent.messageId), msg);
+      await bot.api.editMessageText(chatId, Number(excitingEvent.messageId), msg, {
+        parse_mode: 'HTML',
+      });
       await eventMessageService.saveEventMessage(
         excitingEvent.eventId,
         excitingEvent.eventType,
