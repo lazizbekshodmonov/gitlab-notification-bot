@@ -15,12 +15,12 @@ export function pushEventHandler(event: IGitlabPushEvent, chatId: string, thread
   let projectMsg = `📦 <b>Project:</b> <a href="${project.web_url}">${project.path_with_namespace}</a>\n`;
   let branchMsg = `🌿 <b>Branch:</b> ${branch}\n`;
   if (isCreate) {
-    msg = `🆕 <b>Created new branch</b>`;
+    msg = `🆕 <b>Created new branch</b>\n\n`;
     msg += projectMsg;
     msg += branchMsg;
     msg += `👤 <b>Created by:</b> ${user}\n`;
   } else if (isDelete) {
-    msg = `🗑 <b>Deleted branch<b/>`;
+    msg = `🗑 <b>Deleted branch<b/>\n\n`;
     msg += projectMsg;
     msg += branchMsg;
     msg += `👤 <b>Deleted by:</b> ${user}\n`;
