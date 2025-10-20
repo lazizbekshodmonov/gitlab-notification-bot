@@ -55,7 +55,7 @@ export async function mergeRequestEventHandler(
         msg += `🤝 <b>Closed by:</b> ${user.name}\n`;
       }
       const shortId = event.object_attributes.last_commit.id.slice(0, 8);
-      msg += `<a href="${event.object_attributes.last_commit.url}">${shortId}</a> — ${event.object_attributes.last_commit.message}\n`;
+      msg += `🧱 <b>Commit:</b> <a href="${event.object_attributes.last_commit.url}">${shortId}</a> — ${event.object_attributes.last_commit.message}\n`;
 
       const excitingEvent = await eventMessageService.getMessageByEvent(
         String(event.object_attributes.id)
