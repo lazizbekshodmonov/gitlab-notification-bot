@@ -1,7 +1,7 @@
 import prisma from '../config/prisma.js';
 
 export class EventMessageService {
-  saveEventMessage(
+  async saveEventMessage(
     eventId: string,
     eventType: string,
     chatId: string,
