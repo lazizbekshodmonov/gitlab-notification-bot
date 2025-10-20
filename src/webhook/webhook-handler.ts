@@ -10,6 +10,7 @@ import type { Request, Response } from 'express';
 import type { IGitlabPushEvent } from '../types/gitlab/push-event.js';
 import { pushEventHandler } from '../event-handler/push-event.handler.js';
 import { pipelineEventHandler } from '../event-handler/pipeline-event.handler.js';
+import { mergeRequestEventHandler } from '../event-handler/merge-request-event.handler.js';
 
 function sendMessage(chatId: string, msg: string, threadId?: string): void {
   bot.api.sendMessage(chatId, msg, {
@@ -62,7 +63,7 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
       // ========== MERGE REQUEST EVENT ==========
       case 'merge_request': {
         const event = body as unknown as IGitlabMergeRequestEvent;
-
+        mergeRequestEventHandler(event, chatId, threadId);
         break;
       }
 

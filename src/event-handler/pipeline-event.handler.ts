@@ -27,7 +27,7 @@ export async function pipelineEventHandler(
           msg += `🚀 <b>Pipeline Running...</b>\n\n`;
           break;
         case 'pending':
-          msg += `🚀 <b>Pipeline <Pending></Pending>...</b>\n\n`;
+          msg += `🚀 <b>Pipeline Pending...</b>\n\n`;
           break;
         default:
           msg += `ℹ️ <b>Pipeline Status:</b> ${item.status}\n\n`;
