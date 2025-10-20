@@ -2,7 +2,7 @@ import type { IGitlabMergeRequestEvent } from '../types/gitlab/merge-request-eve
 import bot from '../bot/index.js';
 import eventMessageService from '../services/event-message.service.js';
 
-export function mergeRequestEventHandler(
+export async function mergeRequestEventHandler(
   event: IGitlabMergeRequestEvent,
   chatId: string,
   threadId?: string
