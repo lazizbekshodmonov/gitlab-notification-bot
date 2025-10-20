@@ -29,7 +29,12 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
     switch (object_kind) {
       // ========== PUSH EVENT ==========
       case 'push': {
-        pushEventHandler(body as IGitlabPushEvent, chatId, threadId);
+        const event = body as IGitlabPushEvent;
+        logger.info(
+          `Event ${event.object_kind}, Event ID: ${event.checkout_sha}, Date: ${new Date()}`
+        );
+        pushEventHandler(event, chatId, threadId);
+
         break;
       }
 
@@ -38,7 +43,9 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
         const event = body as unknown as IGitlabNoteEvent;
         const item = event.object_attributes;
         const user = event.user;
-
+        logger.info(
+          `Event ${event.object_kind}, Event ID: ${event.object_attributes.id}, Date: ${new Date()}`
+        );
         if (Object.prototype.hasOwnProperty.call(item, 'action')) {
           let msg = '';
           switch (item.action) {
@@ -57,12 +64,16 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
           }
           sendMessage(chatId, msg, threadId);
         }
+
         break;
       }
 
       // ========== MERGE REQUEST EVENT ==========
       case 'merge_request': {
         const event = body as unknown as IGitlabMergeRequestEvent;
+        logger.info(
+          `Event ${event.object_kind}, Event ID: ${event.object_attributes.id}, Date: ${new Date()}`
+        );
         mergeRequestEventHandler(event, chatId, threadId);
         break;
       }
@@ -77,6 +88,9 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
       // ========== DEPLOYMENT EVENT ==========
       case 'deployment': {
         const event = body as unknown as IGitlabDeploymentEvent;
+        logger.info(
+          `Event ${event.object_kind}, Event ID: ${event.deployment_id}, Date: ${new Date()}`
+        );
         if (event.status === 'success') {
           const msg =
             `🚀📦 <b>Deployment Successful!</b>\n` +
@@ -90,6 +104,7 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
       // ========== RELEASE EVENT ==========
       case 'release': {
         const event = body as unknown as IGitlabReleaseEvent;
+        logger.info(`Event ${event.object_kind}, Event ID: ${event.id}, Date: ${new Date()}`);
         if (event.action === 'create') {
           const msg =
             `📢🎉 <b>New Release Published!</b>\n` +
