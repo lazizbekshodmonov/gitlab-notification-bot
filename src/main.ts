@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import getEnvVariable from './config/env.js';
 import webhookRouter from './webhook/webhook.router.js';
+import prisma from './config/prisma.js';
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(webhookRouter);
 const port = Number(getEnvVariable('PORT'));
 app.listen(port, async (error) => {
   if (error) return console.log(error);
+  prisma.$connect();
   console.log(`🚀 Server running on port ${port}`);
   await bot.start({
     onStart: (botInfo) => {
