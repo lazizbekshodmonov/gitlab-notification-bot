@@ -9,3 +9,21 @@ services:
       - "4000:4000"
     volumes:
       - ./logs:/app/logs
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15
+    container_name: gitlab-notification-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: gitlab-notification-bot
+    ports:
+      - "8032:5432"
+    volumes:
+      - gitlab-notification-postgres_data:/var/lib/postgresql/data
+
+volumes:
+  gitlab-notification-postgres_data:

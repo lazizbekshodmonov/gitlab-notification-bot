@@ -1,7 +1,9 @@
 import type { IGitlabPushEvent } from '../types/gitlab/push-event.js';
 import bot from '../bot/index.js';
+import eventMessageService from '../services/event-message.service.js';
+import type { Api, RawApi } from 'grammy';
 
-export function pushEventHandler(event: IGitlabPushEvent, chatId: string, threadId?: string) {
+export async function pushEventHandler(event: IGitlabPushEvent, chatId: string, threadId?: string) {
   const user = event.user_name;
   const project = event.project;
   const commits = event.commits ?? [];
@@ -43,8 +45,29 @@ export function pushEventHandler(event: IGitlabPushEvent, chatId: string, thread
     }
   }
 
-  bot.api.sendMessage(chatId, msg, {
+  let options: Parameters<Api<RawApi>['sendMessage']>[2] = {
     parse_mode: 'HTML',
-    message_thread_id: Number(threadId),
-  });
+  };
+  if (threadId) {
+    options.message_thread_id = Number(threadId);
+  }
+  const excitingEvent = await eventMessageService.getMessageByEvent(event.checkout_sha);
+  if (excitingEvent) {
+    options = {
+      ...options,
+      reply_parameters: {
+        message_id: Number(excitingEvent.messageId),
+      },
+    };
+  }
+
+  const message = await bot.api.sendMessage(chatId, msg, options);
+
+  eventMessageService.saveEventMessage(
+    event.checkout_sha,
+    event.object_kind,
+    chatId,
+    String(message.message_id),
+    threadId
+  );
 }

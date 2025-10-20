@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model EventMessageMap {
+  id        Int      @id @default(autoincrement())
+  eventId   String   @unique
+  eventSha  String
+  eventType String
+  chatId    String
+  threadId  String?
+  messageId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

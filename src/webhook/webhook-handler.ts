@@ -9,10 +9,7 @@ import type { IGitlabReleaseEvent } from '../types/gitlab/release-event.js';
 import type { Request, Response } from 'express';
 import type { IGitlabPushEvent } from '../types/gitlab/push-event.js';
 import { pushEventHandler } from '../event-handler/push-event.handler.js';
-
-function isEmptyObject(obj: Object) {
-  return !Object.keys(obj).length;
-}
+import { pipelineEventHandler } from '../event-handler/pipeline-event.handler.js';
 
 function sendMessage(chatId: string, msg: string, threadId?: string): void {
   bot.api.sendMessage(chatId, msg, {
@@ -109,38 +106,7 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
       // ========== PIPELINE EVENT ==========
       case 'pipeline': {
         const event = body as unknown as IGitlabPipelineEvent;
-        const item = event.object_attributes;
-        const user = event.user;
-        const commit = event.commit;
-
-        if (Object.prototype.hasOwnProperty.call(item, 'status')) {
-          let msg = '';
-          switch (item.status) {
-            case 'failed':
-              msg += `❌ <b>Pipeline Failed!</b>\n`;
-              break;
-            case 'success':
-              msg += `✅ <b>Pipeline Succeeded!</b>\n`;
-              break;
-            case 'running':
-              msg += `🚀 <b>Pipeline Running...</b>\n`;
-              break;
-            default:
-              msg += `ℹ️ <b>Pipeline Status:</b> ${item.status}\n`;
-          }
-
-          msg += `📦 <b>Project:</b> <a href="${body.project.web_url}">${body.project.path_with_namespace}</a>\n`;
-          msg += `🔗 <a href="${item.url}">Pipeline #${item.id}</a>\n`;
-          msg += `🌿 <b>Branch:</b> ${item.ref}\n`;
-          msg += `👤 <b>Triggered by:</b> ${user.name}\n`;
-          msg += `💬 <b>Commit:</b> ${commit.title}\n`;
-
-          if (event.merge_request && !isEmptyObject(event.merge_request)) {
-            msg += `📦 <b>Related MR:</b> <a href="${event.merge_request.url}">#${event.merge_request.iid}</a>\n`;
-          }
-
-          sendMessage(chatId, msg, threadId);
-        }
+        pipelineEventHandler(event, chatId, threadId);
         break;
       }
 
