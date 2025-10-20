@@ -14,9 +14,9 @@ export function pushEventHandler(event: IGitlabPushEvent, chatId: string, thread
   let msg = `📤 <b>Push Event Detected!</b>\n\n`;
 
   if (isCreate) {
-    msg = `🌿 <b>Yangi ${branch} branch yaratildi</b>`;
+    msg = `🆕 <b>Yangi ${branch} branch yaratildi</b>`;
   } else if (isDelete) {
-    msg = `🔥 <b>${branch} branch o‘chirildi</b>`;
+    msg = `🗑 <b>${branch} branch o‘chirildi</b>`;
   } else {
     msg += `📦 <b>Project:</b> <a href="${project.web_url}">${project.path_with_namespace}</a>\n`;
     msg += `🌿 <b>Branch:</b> ${branch}\n`;
