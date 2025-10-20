@@ -2,6 +2,7 @@ import type { IGitlabMergeRequestEvent } from '../types/gitlab/merge-request-eve
 import bot from '../bot/index.js';
 import eventMessageService from '../services/event-message.service.js';
 import { logger } from '../config/winston.js';
+import type { Api, RawApi } from 'grammy';
 
 export async function mergeRequestEventHandler(
   event: IGitlabMergeRequestEvent,
@@ -53,6 +54,13 @@ export async function mergeRequestEventHandler(
         String(event.object_attributes.id)
       );
 
+      let options: Parameters<Api<RawApi>['sendMessage']>[2] = {
+        parse_mode: 'HTML',
+      };
+      if (threadId) {
+        options.message_thread_id = Number(threadId);
+      }
+
       if (excitingEvent) {
         await bot.api.editMessageText(chatId, Number(excitingEvent.messageId), msg, {
           parse_mode: 'HTML',
@@ -66,9 +74,7 @@ export async function mergeRequestEventHandler(
           excitingEvent.eventSha
         );
       } else {
-        const message = await bot.api.sendMessage(chatId, msg, {
-          parse_mode: 'HTML',
-        });
+        const message = await bot.api.sendMessage(chatId, msg, options);
         await eventMessageService.saveEventMessage(
           String(event.object_attributes.id),
           event.object_kind,
