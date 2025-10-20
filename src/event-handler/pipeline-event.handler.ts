@@ -1,6 +1,6 @@
 import type { IGitlabPipelineEvent } from '../types/gitlab/pipeline-event.js';
 import bot from '../bot/index.js';
-import type { Api, RawApi } from 'grammy';
+import { type Api, InlineKeyboard, type RawApi } from 'grammy';
 import eventMessageService from '../services/event-message.service.js';
 import { logger } from '../config/winston.js';
 
@@ -14,27 +14,33 @@ export async function pipelineEventHandler(
     const user = event.user;
     const commit = event.commit;
 
+    let inlineKeyboard = new InlineKeyboard().url('⌛️ Pending', item.url);
+
     if (Object.prototype.hasOwnProperty.call(item, 'status')) {
       let msg = '';
       switch (item.status) {
         case 'failed':
           msg += `❌ <b>Pipeline Failed!</b>\n\n`;
+          inlineKeyboard = new InlineKeyboard().url('❌ Failed', item.url);
           break;
         case 'success':
           msg += `✅ <b>Pipeline Succeeded!</b>\n\n`;
+          inlineKeyboard = new InlineKeyboard().url('✅ Succeeded', item.url);
           break;
         case 'running':
-          msg += `🚀 <b>Pipeline Running...</b>\n\n`;
+          msg += `🏃‍♂️ <b>Pipeline Running...</b>\n\n`;
+          inlineKeyboard = new InlineKeyboard().url('🏃‍♂️ Running', item.url);
           break;
         case 'pending':
-          msg += `🚀 <b>Pipeline Pending...</b>\n\n`;
+          msg += `⌛️ <b>Pipeline Pending...</b>\n\n`;
+          inlineKeyboard = new InlineKeyboard().url('⌛️ Pending', item.url);
           break;
         default:
           msg += `ℹ️ <b>Pipeline Status:</b> ${item.status}\n\n`;
+          inlineKeyboard = new InlineKeyboard().url(`ℹ️ ${item.status}`, item.url);
       }
 
       msg += `📦 <b>Project:</b> <a href="${event.project.web_url}">${event.project.path_with_namespace}</a>\n`;
-      msg += `🔗 <a href="${item.url}">Pipeline #${item.id}</a>\n`;
       msg += `🌿 <b>Branch:</b> ${item.ref}\n`;
       msg += `👤 <b>Triggered by:</b> ${user.name}\n`;
       msg += `💬 <b>Commit:</b> ${commit.title}\n`;
@@ -45,6 +51,7 @@ export async function pipelineEventHandler(
 
       let options: Parameters<Api<RawApi>['sendMessage']>[2] = {
         parse_mode: 'HTML',
+        reply_markup: inlineKeyboard,
       };
       if (threadId) {
         options.message_thread_id = Number(threadId);
@@ -66,6 +73,7 @@ export async function pipelineEventHandler(
       if (excitingEvent) {
         await bot.api.editMessageText(chatId, Number(excitingEvent.messageId), msg, {
           parse_mode: 'HTML',
+          reply_markup: inlineKeyboard,
         });
         await eventMessageService.saveEventMessage(
           excitingEvent.eventId,
