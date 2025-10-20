@@ -20,7 +20,7 @@ export function pushEventHandler(event: IGitlabPushEvent, chatId: string, thread
     msg += branchMsg;
     msg += `👤 <b>Created by:</b> ${user}\n`;
   } else if (isDelete) {
-    msg = `🗑 <b>Deleted branch<b/>\n\n`;
+    msg = `🗑 <b>Deleted branch</b>\n\n`;
     msg += projectMsg;
     msg += branchMsg;
     msg += `👤 <b>Deleted by:</b> ${user}\n`;
