@@ -11,15 +11,23 @@ export function pushEventHandler(event: IGitlabPushEvent, chatId: string, thread
   const isCreate = event.before === '0000000000000000000000000000000000000000';
   const isDelete = event.after === '0000000000000000000000000000000000000000';
 
-  let msg = `📤 <b>Push Event Detected!</b>\n\n`;
-
+  let msg = '';
+  let projectMsg = `📦 <b>Project:</b> <a href="${project.web_url}">${project.path_with_namespace}</a>\n`;
+  let branchMsg = `🌿 <b>Branch:</b> ${branch}\n`;
   if (isCreate) {
-    msg = `🆕 <b>Created new branch: ${branch}</b>`;
+    msg = `🆕 <b>Created new branch</b>`;
+    msg += projectMsg;
+    msg += branchMsg;
+    msg += `👤 <b>Created by:</b> ${user}\n`;
   } else if (isDelete) {
-    msg = `🗑 <b>Deleted branch: ${branch}</b>`;
+    msg = `🗑 <b>Deleted branch<b/>`;
+    msg += projectMsg;
+    msg += branchMsg;
+    msg += `👤 <b>Deleted by:</b> ${user}\n`;
   } else {
-    msg += `📦 <b>Project:</b> <a href="${project.web_url}">${project.path_with_namespace}</a>\n`;
-    msg += `🌿 <b>Branch:</b> ${branch}\n`;
+    msg = `📤 <b>Push Event Detected!</b>\n\n`;
+    msg += projectMsg;
+    msg += branchMsg;
     msg += `👤 <b>Pushed by:</b> ${user}\n`;
     msg += `🧱 <b>Commits:</b> ${totalCommits}\n\n`;
 
