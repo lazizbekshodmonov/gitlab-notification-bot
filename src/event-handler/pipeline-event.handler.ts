@@ -18,16 +18,19 @@ export async function pipelineEventHandler(
       let msg = '';
       switch (item.status) {
         case 'failed':
-          msg += `❌ <b>Pipeline Failed!</b>\n`;
+          msg += `❌ <b>Pipeline Failed!</b>\n\n`;
           break;
         case 'success':
-          msg += `✅ <b>Pipeline Succeeded!</b>\n`;
+          msg += `✅ <b>Pipeline Succeeded!</b>\n\n`;
           break;
         case 'running':
-          msg += `🚀 <b>Pipeline Running...</b>\n`;
+          msg += `🚀 <b>Pipeline Running...</b>\n\n`;
+          break;
+        case 'pending':
+          msg += `🚀 <b>Pipeline <Pending></Pending>...</b>\n\n`;
           break;
         default:
-          msg += `ℹ️ <b>Pipeline Status:</b> ${item.status}\n`;
+          msg += `ℹ️ <b>Pipeline Status:</b> ${item.status}\n\n`;
       }
 
       msg += `📦 <b>Project:</b> <a href="${event.project.web_url}">${event.project.path_with_namespace}</a>\n`;

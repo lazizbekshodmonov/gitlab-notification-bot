@@ -62,44 +62,7 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
       // ========== MERGE REQUEST EVENT ==========
       case 'merge_request': {
         const event = body as unknown as IGitlabMergeRequestEvent;
-        const item = event.object_attributes;
-        const user = event.user;
 
-        if (Object.prototype.hasOwnProperty.call(item, 'action')) {
-          let msg = '';
-          switch (item.action) {
-            case 'open':
-              msg += `🍒 <b>New merge request opened by:</b> ${user.name}\n`;
-              break;
-            case 'reopen':
-              msg += `🔄 <b>Merge request reopened by:</b> ${user.name}\n`;
-              break;
-            case 'merge':
-              msg += `✅ <b>Merge request merged successfully!</b>\n`;
-              break;
-            case 'close':
-              msg += `🚫 <b>Merge request closed.</b>\n`;
-              break;
-          }
-
-          msg += `📦 <a href="${item.url}">${item.title}</a>\n`;
-          msg += `🔀 <b>Branches:</b> ${item.source_branch} → ${item.target_branch}\n`;
-
-          if (event.assignees?.length) {
-            msg += `👥 <b>Assignees:</b> ${event.assignees.map((a) => a.name).join(', ')}\n`;
-          }
-
-          if (event.reviewers?.length) {
-            msg += `👀 <b>Reviewers:</b> ${event.reviewers.map((r) => r.name).join(', ')}\n`;
-          }
-
-          msg += `👤 <b>Opened by:</b> ${item.last_commit?.author?.name || user.name}\n`;
-          if (user) {
-            msg += `🤝 <b>Merged by:</b> ${user.name}\n`;
-          }
-
-          sendMessage(chatId, msg, threadId);
-        }
         break;
       }
 
