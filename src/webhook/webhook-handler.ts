@@ -8,6 +8,7 @@ import { logger } from '../config/winston.js';
 import type { IGitlabReleaseEvent } from '../types/gitlab/release-event.js';
 import type { Request, Response } from 'express';
 import type { IGitlabPushEvent } from '../types/gitlab/push-event.js';
+import { pushEventHandler } from '../event-handler/push-event.handler.js';
 
 function isEmptyObject(obj: Object) {
   return !Object.keys(obj).length;
@@ -24,37 +25,13 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
   try {
     const chatId = req.params.chatId as string;
     const threadId = req.params.threadId;
-    const event: GitlabEvent = req.body as GitlabEvent;
-    const object_kind = event.object_kind;
+    const body: GitlabEvent = req.body as GitlabEvent;
+    const object_kind = body.object_kind;
 
     switch (object_kind) {
       // ========== PUSH EVENT ==========
       case 'push': {
-        const body = event as IGitlabPushEvent;
-        const user = body.user_name;
-        const project = body.project;
-        const commits = body.commits ?? [];
-        const branch = body.ref?.split('/').pop() ?? 'unknown';
-        const totalCommits = commits.length;
-
-        let msg = `📤 <b>Push Event Detected!</b>\n\n`;
-        msg += `📦 <b>Project:</b> <a href="${project.web_url}">${project.path_with_namespace}</a>\n`;
-        msg += `🌿 <b>Branch:</b> ${branch}\n`;
-        msg += `👤 <b>Pushed by:</b> ${user}\n`;
-        msg += `🧱 <b>Commits:</b> ${totalCommits}\n\n`;
-
-        const displayCommits = commits.slice(-3);
-        for (const commit of displayCommits) {
-          const commitUrl = commit.url;
-          const shortId = commit.id.slice(0, 8);
-          msg += `• <a href="${commitUrl}">${shortId}</a> — ${commit.message}\n`;
-        }
-
-        if (totalCommits > 3) {
-          msg += `\n<i>...and ${totalCommits - 3} more commits.</i>`;
-        }
-
-        sendMessage(chatId, msg, threadId);
+        pushEventHandler(body as IGitlabPushEvent, chatId, threadId)
         break;
       }
 
