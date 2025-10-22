@@ -95,7 +95,7 @@ export async function webhookHandler(req: Request, res: Response): Promise<void>
           const msg =
             `🚀📦 <b>Deployment Successful!</b>\n` +
             `🌍 <b>Environment:</b> ${event.environment}\n` +
-            `🔗 <a href="${event.environment_external_url}">${event.environment_external_url}</a>`;
+            `🔗 <a href="${event.deployable_url}">${event.deployment_id}</a>`;
           sendMessage(chatId, msg, threadId);
         }
         break;
